@@ -1,0 +1,23 @@
+# PlatformIO
+.pio/
+.vscode/.browse.c_cpp.db*
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/ipch
+
+# собранные бинарники тестов и симулятора
+firmware/test/test_core
+firmware/sim/cyclone_sim
+*.o
+*.bin
+*.elf
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# системный мусор
+.DS_Store
+Thumbs.db

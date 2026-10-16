@@ -1,0 +1,4 @@
+pyserial>=3.5
+numpy
+# для меток ArUco (на Raspberry Pi можно: sudo apt install python3-opencv)
+opencv-contrib-python-headless

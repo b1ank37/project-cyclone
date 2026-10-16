@@ -1,0 +1,54 @@
+digraph E {
+  graph [rankdir=LR, splines=ortho, nodesep=0.35, ranksep=0.7, fontname="DejaVu Sans", fontsize=13, labelloc=t, label="Электрическая схема (блочная) — «Циклон» v2", pad=0.2, newrank=true];
+  node  [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=10, fillcolor=white, color="#34495E", penwidth=1.3, margin="0.12,0.06"];
+  edge  [fontname="DejaVu Sans", fontsize=8.5, penwidth=1.5, arrowsize=0.7];
+
+  subgraph cluster_pwr { label="Питание"; style="rounded,dashed"; color="#C0392B"; fontcolor="#C0392B";
+    bat  [label="АКБ 4S1P 18650\n14,4 В (12–16,8 В), 3,4 А·ч", fillcolor="#FADBD8"];
+    bms  [label="BMS 4S ≥ 10 А", fillcolor="#FADBD8"];
+    fuse [label="Предохранитель 7,5 А\n+ выключатель", fillcolor="#FADBD8"];
+    estop[label="E-STOP (NC)\nразрывает питание моторов", fillcolor="#F5B7B1"];
+    b5   [label="DC-DC 5,1 В / 5 А", fillcolor="#FDEBD0"];
+    b6   [label="DC-DC 6 В / 3 А\n+ 1000 мкФ", fillcolor="#FDEBD0"];
+  }
+  subgraph cluster_drv { label="Силовая часть"; style="rounded,dashed"; color="#7B241C"; fontcolor="#7B241C";
+    drvL [label="IBT-2 (BTS7960)\nлевый борт", fillcolor="#FDEDEC"];
+    drvR [label="IBT-2 (BTS7960)\nправый борт", fillcolor="#FDEDEC"];
+    mL   [label="Моторы Л: ПЛ + ЗЛ\nJGB37-520 (параллельно)\nэнкодер на ПЛ", fillcolor="#EAF2F8"];
+    mR   [label="Моторы П: ПП + ЗП\nJGB37-520 (параллельно)\nэнкодер на ПП", fillcolor="#EAF2F8"];
+    servo[label="Сервопривод MG996R\n(подъём отвала)", fillcolor="#EAF2F8"];
+  }
+  subgraph cluster_ctl { label="Управление"; style="rounded,dashed"; color="#117A65"; fontcolor="#117A65";
+    rpi  [label="Raspberry Pi 4\nметки ArUco, маршрут,\nвеб-панель/бот", fillcolor="#FEF5E7", color="#B9770E"];
+    cam  [label="Камера CSI/USB", fillcolor="#FEF5E7"];
+    gps  [label="GPS NEO-6M\n(необязательно)", fillcolor="#F2F3F4", color="#99A3A4", fontcolor="#5D6D7E"];
+    esp  [label="ESP32 DevKit V1\nПИД, курс, безопасность,\nтелеметрия", fillcolor="#E8F8F5", color="#117A65", penwidth=2];
+    lvl  [label="74HCT245\n3,3 → 5 В", fillcolor="#FEF9E7"];
+  }
+  subgraph cluster_sens { label="Датчики"; style="rounded,dashed"; color="#1F618D"; fontcolor="#1F618D";
+    imu  [label="MPU6050 (I²C)", fillcolor="#EBF5FB"];
+    us   [label="3× HC-SR04\nделитель на ECHO", fillcolor="#EBF5FB"];
+    bump [label="Бампер (кнопки на GND)", fillcolor="#EBF5FB"];
+    vdiv [label="Делитель 100к/22к\n(напряжение АКБ)", fillcolor="#EBF5FB"];
+  }
+
+  edge [color="#C0392B"];
+  bat -> bms -> fuse;
+  fuse -> estop [xlabel="VBAT"];
+  estop -> drvL; estop -> drvR;
+  drvL -> mL [xlabel="M+/M−"]; drvR -> mR;
+  fuse -> b5; fuse -> b6; fuse -> vdiv [style=dashed];
+  b5 -> rpi [xlabel="5,1 В"]; b5 -> esp [xlabel="VIN 5 В"]; b6 -> servo;
+
+  edge [color="#2C3E50"];
+  esp -> lvl [xlabel="ШИМ×4, EN"]; lvl -> drvL; lvl -> drvR;
+  esp -> servo [xlabel="GPIO13"];
+
+  edge [color="#1F618D"];
+  rpi -> esp [dir=both, xlabel="UART 115200", penwidth=2.2];
+  cam -> rpi; gps -> rpi [style=dashed];
+  mL -> esp [xlabel="энк. 34/35", constraint=false]; mR -> esp [xlabel="энк. 18/19", constraint=false];
+  imu -> esp [dir=both, xlabel="21/22"]; us -> esp [dir=both]; bump -> esp [xlabel="39"]; vdiv -> esp [xlabel="36"];
+
+  {rank=same; esp; lvl}
+}

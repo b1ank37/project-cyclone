@@ -1,0 +1,15 @@
+{
+  "name": "Пример с метками: от входа до угла корпуса",
+  "speed": 0.25,
+  "steps": [
+    {"blade": "down"},
+    {"drive": 12.0},
+    {"marker": 1, "stop_at": 0.8},
+    {"blade": "up"},
+    {"turn": -90},
+    {"blade": "down"},
+    {"drive": 8.0},
+    {"marker": 2, "stop_at": 0.8},
+    {"blade": "up"}
+  ]
+}

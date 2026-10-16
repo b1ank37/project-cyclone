@@ -1,0 +1,15 @@
+{
+  "name": "Демо: дорожка 2 × 6 м с разворотом",
+  "speed": 0.25,
+  "steps": [
+    {"blade": "down"},
+    {"drive": 6.0},
+    {"blade": "up"},
+    {"turn": 90},
+    {"drive": 0.4},
+    {"turn": 90},
+    {"blade": "down"},
+    {"drive": 6.0},
+    {"blade": "up"}
+  ]
+}
